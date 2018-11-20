@@ -1,0 +1,1834 @@
+1 Architectural Design
+1.1 WFCF-CLD-REQ-269121/A-Wifi Config Server
+Responsibility: The Wifi Config Server (also referred to as “the system”) is responsible for providing, handling, storing, and displaying the Wifi Configuration feature content to the user when requested.
+1.2 WFCF-REQ-269122/A-Logical Signal Mapping
+The CAN signals mentioned throughout this document shall refer to the CAN signal’s logical name. The logical names shall be mapped to their actual CAN signal names. Please use the table below to perform the mapping. The InfoCAN database file is the master file for the actual CAN signal names. Note: some CAN signals referenced throughout this document may use the logical name while some may use the actual CAN signal name.
+Logical Name CAN Signal Name
+IgnitionStatus_St
+Ignition_Status
+PowerMode_St
+PowerMode_St
+Delay_Accy
+Delay_Accy
+VehicleSpeed_St Veh_V_ActlEng
+CarMode_St
+LifeCycMde_D_Actl (CGEA1.3)
+CarMode_St
+CarMode (C1MCA)
+GearLvrPos_D_Actl
+GearLvrPos_D_Actl
+GearRvrse_D_Actl
+GearRvrse_D_Actl
+GearRvrseActv_D_Actl
+GearRvrseActv_D_Actl
+ElectronicParkBrake_St
+ElectronicParkBrake_St
+ParkBrake_St
+Park_Brake.St HMIMode_St HMI_HMIMode_St
+HotspotEnablement_St
+WifiHtsptEnbl_D_Stat
+TCUAvailability_St
+WifiEnbl_D_Stat
+WifiHotspotMAC_Rsp
+WifiHtsptMacAddr_B_Rsp
+WifiHotspotMAC_Rq
+WifiHtsptMacAddr_B_Rq
+Table. Logical name/CAN signal mapping
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 12 of 38
+1.3 WifiConfigServer Interface
+1.3.1 IIR-REQ-269125/A-WifiConfigServer_Rx
+1.3.1.1 MD-REQ-027149/A-IgnitionStatus_St (TcSE ROIN-225464-1)
+Message Type: Status
+Signal used to indicate ignition state.
+Name
+Literals
+Value
+Description
+Type
+-
+-
+Indicates ignition state
+Unknown
+0x0
+Off
+0x1
+Accessory
+0x2
+Run
+0x4
+Start
+0x8
+Invalid
+0xF
+1.3.1.2 MD-REQ-029118/A-PowerMode_St (TcSE ROIN-251337)
+Message Type: Status
+Status used to indicate the current power mode.
+Name
+Literals
+Value
+Description
+Value
+KeyOut
+KeyRecentlyOut
+KeyApproved_0
+PostAccessory_0
+Accessory_1
+PostIgnition_1
+IgnitionOn_2
+Running_2
+Not used
+Crank_3
+Not used
+0x0
+0x1
+0x2
+0x3
+0x4
+0x5
+0x6
+0x7
+0x8
+0x9
+0xA
+Sub-system: Power Supply
+E/E Function: Power Mode
+used for Ignition Key Position information.
+Object.BodySystemInterface.PowerMode.Value
+(Parameter1)
+QualityFactor
+PowerModeUndefined
+PowerModeEvaluationInProgress
+Not defined
+PowerModeOK
+0x0
+0x1
+0x2
+0x3
+Sub-system: Power Supply
+E/E Function: Power Mode
+Quality Factor for power mode information.
+Object.BodySystemInterface.PowerMode.QF
+(Parameter2)
+UpdateBit
+Inactive
+Active
+0x0
+0x1
+Sub-system: Power Supply
+E/E Function: Power Mode
+Update bit for indication if the information is newly written from the transmitter or not. Update bit handling is described within separate specification.
+Object.BodySystemInterface.PowerMode.UB
+(Parameter3)
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 13 of 38
+1.3.1.3 MD-REQ-201601/A-Delay_Accy
+Message Type: Status
+This signal is used indicate whether Delayed Accessory is active or not.
+Name
+Literals
+Value
+Description
+Type
+-
+-
+Status of delayed accessory
+Off
+0x00
+On
+0x01
+1.3.1.4 MD-REQ-014025/A-VehicleSpeed_St (TcSE ROIN-223023-1)
+Message Type: Status
+Status used to indicate vehicle speed.
+Name
+Literals
+Value
+Description
+Type
+-
+-
+Indicates vehicle speed.
+Unit: kph
+Resolution:0.01
+Offset:0
+kph
+0x0 to 0xFFFF
+1.3.1.5 MD-REQ-086348/A-CarMode_St
+Message Type: Status
+Name
+Literals
+Value
+Description
+Type
+-
+-
+Defines what car mode state is active.
+Normal
+0x0
+Factory
+0x1
+NotUsed
+0x2
+Transportation
+0x3
+1.3.1.6 MD-REQ-199808/A-GearLvrPos_D_Actl
+Message Type: Status
+Vehicle status signal for the Gear Lever Position on an automatic transmission vehicle.
+Name
+Literals
+Value
+Description
+Type
+-
+-
+-
+Park
+0x0
+Reverse
+0x1
+Neutral
+0x2
+Drive
+0x3
+Sport_DriveSport
+0x4
+Low
+0x5
+First
+0x6
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 14 of 38
+Second
+0x7
+Third
+0x8
+Fourth
+0x9
+Fifth
+0xA
+Sixth
+0xB
+Undefined_Treat_as_Fault
+0xC
+Undefined_Treat_as_Fault1
+0xD
+Unknown_Position
+0xE
+Fault
+0xF
+1.3.1.7 MD-REQ-269485/A-GearRvrse_D_Actl
+Message Type: Status
+New vehicle status signal for notifying that Reverse Gear is engaged on a manual transmission vehicle (GearRvrseActv_D_Actl = legacy signal).
+Name
+Literals
+Value
+Description
+Type
+-
+-
+-
+Inactive_not_confirmed
+0x0
+Inactive_confirmed
+0x1
+Active_not_confirmed
+0x2
+Active_confirmed
+0x3
+NotUsed
+0x4 - 0x6
+Fault
+0x7
+1.3.1.8 MD-REQ-014024/A-GearRvrseActv_D_Actl (TcSE ROIN-266649-1)
+Message Type: Status
+Vehicle status signal for notifying that Reverse Gear is engaged on a manual transmission vehicle.
+Name
+Literals
+Value
+Description
+Type
+-
+-
+-
+Inactive
+0x0
+Active
+0x1
+Unknown
+0x2
+Fault
+0x3
+1.3.1.9 MD-REQ-014085/A-ElectronicParkBrake_St (TcSE ROIN-287065-1)
+Message Type: Status
+Signal used to indicate the Electronic Parking Brake status.
+Name
+Literals
+Value
+Description
+Type
+-
+-
+-
+NotUsed
+0x0
+Rear_Caliper_Closed
+0x1
+Rear_Caliper_Transition
+0x2
+RWU_By_EPB_Active
+0x3
+Rear_Caliper_Open
+0x4
+EPB_Limphome_Active
+0x5
+ECD_by_Brake_ECU_Active
+0x6
+GeneralFault_MaintenceMode
+0x7
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 15 of 38
+1.3.1.10 MD-REQ-014084/A-ParkBrake_St (TcSE ROIN-287064-1)
+Message Type: Status
+Signal used to indicate the Parking Brake status.
+Name
+Literals
+Value
+Description
+Type
+-
+-
+-
+Inactive
+0x0
+Active
+0x1
+1.3.1.11 MD-REQ-027937/A-HMIMode_St (TcSE ROIN-229453-1)
+Message Type: Status
+This method holds the information about the HMI state of the multimedia system.
+This attribute shows the HMI mode. The HMI mode is defined in the Network Management Strategy.
+Name
+Literals
+Value
+Description
+Mode
+-
+-
+Signal is used to indicate HMI state.
+Invalid
+0x0
+OffMode
+0x1
+On
+0x2
+Phone
+0x3
+Climate
+0x4
+Load_Shed_Active
+0x5
+1.3.1.12 MD-REQ-179284/A-HotspotEnablement_St
+Message Type: Status
+This signal is used to inform the WifiHotSpotOnBoardClient the current state of the Hotspot Enablement
+Name
+Literals
+Value
+Description
+Type
+-
+-
+Wi-Fi chipset transmission status of Wi-Fi signal
+Null
+0x0
+Off
+0x1
+No Wi-Fi signal transmission on Wi-Fi chipset
+On
+0x2
+Wi-Fi chipset is transmitting Wi-Fi signal
+On-Disabled
+0x3
+Wi-Fi chipset shall transmit Wi-Fi signal once other defined conditions are met
+1.3.1.13 MD-REQ-179305/B-TCUAvailability_St
+Message Type: Status
+This signal is used to inform the WifiHotSpotOnBoardClient the current state of the Wi-Fi Hotspot feature
+Name
+Literals
+Value
+Description
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 16 of 38
+Type
+-
+-
+Wi-Fi feature readiness status
+Null
+0x0
+Disable
+0x1
+Enable
+0x2
+1.3.1.14 MD-REQ-195174/A-WifiHotspotMAC_Rsp
+Message Type: Response
+This signal is used to respond to the WifiHotSpotOnBoardClient with the MAC Address.
+Name
+Literals
+Value
+Description
+MAC
+-
+-
+Media Access Control address used to differentiate TCU hotspot from all other hotspots. Data array that consists of textual information up to 17 characters in length, plus end of string
+1.3.2 IIR-REQ-269484/A-WifiConfigServer_Tx
+1.3.2.1 MD-REQ-195171/A-WifiHotspotMAC_Rq
+Message Type: Request
+This signal is used to request the MAC Address from the WifiHotSpotServer
+Name
+Literals
+Value
+Description
+Type
+-
+-
+Wi-Fi Hotspot MAC address request from center stack
+NoRequest
+0x0
+Request
+0x1
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 17 of 38
+2 General Requirements
+2.1 WFCF-REQ-235186/B-Terminology description
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 (see http://www.ietf.org/rfc/rfc2119.txt).
+2.2 WFCF-REQ-235187/B-Certification
+The system SHALL be certified for 2.4 GHz and 5 GHz in the STA and AP roles via the Wi-Fi alliance consortium for the following programs;
+- Wi-Fi CERTIFIED a, Wi-Fi CERTIFIED b, Wi-Fi CERTIFIED g, Wi-Fi CERTIFIED n, WPA2-Personal (Wi-Fi Protected Access 2), WMM (Wi-Fi Multimedia),
+- Wi-Fi direct, Wi-Fi Protected Setup.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 18 of 38
+3 Functional Definition
+3.1 WFCF-FUN-REQ-025249/D-Configure Wi-Fi Settings (TcSE ROIN-292602-1)
+User is able to modify various Wi-Fi connectivity settings such as turning functionality On/Off, Searching/connecting to Access Points (APs), and find out more information about available Wi-Fi access points.
+3.1.1 Use Cases
+3.1.1.1 WFCF-UC-REQ-025250/C-User would like to change Wi-Fi connectivity settings while the vehicle is moving (TcSE ROIN-291833)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = ON Scenario Description
+User would like to change Wi-Fi connectivity settings while the vehicle is moving (System’s driver restrictions = ON) Post-conditions
+The user will not be able to access or change any Wi-Fi connectivity settings while Driver Restriction = ON List of Exception Use Cases
+E1 - VS-GUC-291851-Driver Restriction = ON after accessing the Wi-Fi settings menu Interfaces
+G-HMI
+3.1.1.2 WFCF-UC-REQ-025251/D-User would like to disable Wi-Fi connectivity in his/her vehicle (TcSE ROIN-291834)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON Scenario Description
+The user decides that he/she wants to disable (OFF) Wi-Fi in the vehicle. The user selects the Wi-Fi {OFF} option in the HMI. Post-conditions
+Wi-Fi feature is turned OFF. All of the Wi-Fi functions are disabled. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.3 WFCF-UC-REQ-025252/D-User would like to enable Wi-Fi connectivity in his/her vehicle (TcSE ROIN-291835)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = OFF Scenario Description
+The user decides that he/she wants Wi-Fi to be enabled (ON) in the vehicle. The user selects the Wi-Fi {ON} option in the HMI. Post-conditions
+Wi-Fi feature is turned ON. All of the Wi-Fi functions are enabled. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.4 WFCF-UC-REQ-025253/D-User would like to see a list of Wi-Fi network(s) within range of their current location (TcSE ROIN-291836)
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 19 of 38
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON Scenario Description
+The user would like to see a list of the Wi-Fi network(s) within range. The user accesses the {choose a network} option on the HMI. Post-conditions
+The system scans/searches and pre-populates a list of in-range Wi-Fi networks that is displayed to the user sorted by signal strength (High to low). Each Wi-Fi network in the list should convey the following information:
+- Network name (SSID)
+- Lock or Unlocked icon (suggesting a secure vs. unsecured network)
+- Signal strength bar(s) List of Exception Use Cases
+E1 - VS-GUC-291852-No Wi-Fi networks available within range Interfaces
+G-HMI
+3.1.1.5 WFCF-UC-REQ-025254/I-User would like to find out more information about a Wi-Fi network (TcSE ROIN-291837)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Connectivity status = Not connected Scenario Description
+The user would like to see miscellaneous network information from a nearby Wi-Fi network.
+The user clicks on "select a network" options on HMI
+The user picks an item from the list of Wi-Fi networks and then selects the {Information} option in the HMI. Post-conditions
+The following information is presented for the selected Wi-Fi network:
+- Status (i.e. Not connected or connected)
+- Security Type (i.e. WEP, WPA, WPA2, etc.)
+- Signal Strength (i.e. Excellent, Good, Fair or Poor)
+- The supported band List of Exception Use Cases
+E1 - VS-GUC-291853-1-Current selected Wi-Fi network no longer available while info screen still presented Interfaces
+G-HMI
+3.1.1.6 WFCF-UC-REQ-025255/D-User would like to refresh the list of Wi-Fi network(s) within range (TcSE ROIN-291838)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON Scenario Description
+The user would like to refresh the list of in-range Wi-Fi networks. The user selects the {Search} or {Refresh} option in the HMI. Post-conditions
+A refreshed list of Wi-Fi networks is displayed sorted by signal strength (high to low). Each Wi-Fi network in the list should convey the following information:
+- Network name (SSID)
+- Locked or Unlocked icon (suggesting a secure vs. unsecured network)
+- Signal strength bar(s) List of Exception Use Cases
+E1 - VS-GUC-291854-1-No Wi-Fi networks available after search or refresh
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 20 of 38
+Interfaces
+G-HMI
+3.1.1.7 WFCF-UC-REQ-025256/B-User would like to select and connect to a Wi-Fi Network (TcSE ROIN-291839)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Wi-Fi network(s) available Scenario Description
+User would like to select and connect to a Wi-Fi Network. The user picks a Wi-Fi network from the list and selects the {Connect} option on the HMI. Post-conditions
+After selecting the {Connect} option, the user is presented the opportunity to enter the Wi-Fi network’s password. The user should be able to use a full keyboard allowing him/her to enter alphanumeric/special characters.
+Once the password has been successfully entered and accepted by the Wi-Fi network a message and icon should indicate to the user that he/she is currently connected to the specific Wi-Fi network. List of Exception Use Cases
+E1 - VS-GUC-291855-Incorrect Wi-Fi network password
+E2 - VS-GUC-291856-Open Wi-Fi network doesn’t required a password Interfaces
+G-HMI
+3.1.1.8 WFCF-UC-REQ-025257/F-User would like to connect to a Wi-Fi Network using Wi-Fi Protected Setup (WPS) using the router’s WPS Push-Button-Method (TcSE ROIN-291840)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Wi-Fi Protected Setup(WPS) enabled Access Point device (router) Scenario Description
+The user would like to connect to Wi-Fi network that uses Wi-Fi Protected Setup(WPS). The user presses the WPS Push-Button on their Access Point (router). The user then selects the {Wi-Fi Protected setup icon} in the System’s HMI. Post-conditions
+A time base (2 minutes) message is displayed on the screen. Once the System detects the WPS connection from the router it will automatically connect to the Wi-Fi network. A message and icon should indicate to the user that he/she is currently connected to the specific Wi-Fi network. List of Exception Use Cases
+E1 - VS-GUC-291857-WPS association time expires Interfaces
+G-HMI
+3.1.1.9 WFCF-UC-REQ-025258/D-User would like to connect to a Wi-Fi Network using Wi-Fi Protected Setup (WPS) PIN provided by the system (TcSE ROIN-291841)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Wi-Fi Protected Security (WPS) enabled Access Point device (router) Scenario Description
+User would like to connect to a Wi-Fi Network using Wi-Fi Protected Setup (WPS) using the WPS PIN provided by the system. The user selects the {WPS Pin Entry} in the System’s HMI.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 21 of 38
+Post-conditions
+A time base (2 minutes) message with a random PIN is display on the screen. Once the user inserts the PIN provided by the system into their Access Point (router), the system will detect the association request and it will automatically connect to the Wi-Fi network. A message and icon should indicate to the user that he/she is currently connected to the specific Wi-Fi network. List of Exception Use Cases
+E1 - VS-GUC-291858-System’s WPS Random PIN message expires Interfaces
+G-HMI
+3.1.1.10 WFCF-UC-REQ-025259/I-User would like to find more information about the Wi-Fi network (TcSE ROIN-291842)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Connectivity status = Connected Scenario Description
+The user would like to check miscellaneous network information about a currently connected Wi-Fi network. The user picks the currently connected Wi-Fi network from the list and then selects the {Information} option in the HMI. Post-conditions
+The following information is presented for the currently connected Wi-Fi network:
+- Status
+- IP Address
+- Subnet Mask
+- Security Type (i.e. WEP, WPA, WPA2, etc.)
+- Signal Strength (i.e. Excellent, Good, Fair or Poor)
+- Band
+List of Exception Use Cases
+E1 - VS-GUC-291859-Current selected Wi-Fi network disconnects Interfaces
+G-HMI
+3.1.1.11 WFCF-UC-REQ-025264/D-User Wi-Fi network(s) availability notification (TcSE ROIN-291847)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Network availability notification = ON Scenario Description
+The system notifies the user of common available found/detected Wi-Fi network(s) around their current location based on certain conditions. Post-conditions
+The user is presented with an icon to indicate that the system has found Wi-Fi networks. The user may act on this notification by searching and selecting a network to connect to. List of Exception Use Cases
+E1 - VS-GUC-291865-User ignores the Network availability notification
+Interfaces
+G-HMI
+3.1.1.12 WFCF-UC-REQ-025265/D-User would like to disable Wi-Fi network(s) availability notification (TcSE ROIN-291848)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 22 of 38
+Wi-Fi = ON
+Network availability notification = ON Scenario Description
+The user would like to disable Wi-Fi network(s) availability notification. The user selects the turn Wi-Fi network(s) availability notification {OFF} option in the HMI. Post-conditions
+The Wi-Fi network(s) availability notification is disabled and no icon is displayed to the user. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.13 WFCF-UC-REQ-025266/B-User would like to enable Wi-Fi network(s) availability notification (TcSE ROIN-291849)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Network availability notification = OFF Scenario Description
+The user would like to enable Wi-Fi network(s) availability notification. The user selects the turn Wi-Fi network(s) availability notification {ON} option in the HMI. Post-conditions
+The Wi-Fi network(s) availability notification is enabled List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.14 WFCF-UC-REQ-025267/E-User would like to know his/her current Wi-Fi network connectivity status while away from the Wi-Fi settings HMI (TcSE ROIN-291850)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available Scenario Description
+The user is currently navigating the HMI (not in the Wi-Fi settings HMI) and would like to know the current status of his/her Wi-Fi connectivity. Post-conditions
+A {Wi-Fi HMI icon} with dynamic signal strength bar(s) (up to 4 bars) should be displayed in a general location where the user can access and see even when away from the Wi-Fi settings screen. List of Exception Use Cases
+E1 - VS-GUC-291867 - Currently connected to a Wi-Fi network
+E2 - VS-GUC-291868 - Not connected to any Wi-Fi network
+E3 - VS-GUC-291869 - Wi-Fi antenna OFF Interfaces
+G-HMI
+3.1.1.15 WFCF-UC-REQ-025268/D-Driver Restriction = ON after accessing the Wi-Fi settings menu (TcSE ROIN-291851)
+Linked Elements
+WFCF-UC-REQ-025250/C-User would like to change Wi-Fi connectivity settings while the vehicle is moving (TcSE ROIN-291833)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = ON Scenario Description
+Driver Restriction is ON after the user had already accessed the Wi-Fi settings menu Post-conditions
+The Wi-Fi settings functions options should be grayed out or disabled until the Driver Restriction = OFF
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 23 of 38
+List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.16 WFCF-UC-REQ-025269/B-No Wi-Fi networks available within range (TcSE ROIN-291852)
+Linked Elements
+WFCF-UC-REQ-025253/D-User would like to see a list of Wi-Fi network(s) within range of their current location (TcSE ROIN-291836)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Connectivity status = Not connected Scenario Description
+No Wi-Fi networks available within range when the user access the list of Wi-Fi networks Post-conditions
+No Wi-Fi networks are displayed. The list will be empty. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.17 WFCF-UC-REQ-025270/D-Currently selected Wi-Fi network no longer available while info screen still presented (TcSE ROIN-291853)
+Linked Elements
+WFCF-UC-REQ-025254/I-User would like to find out more information about a Wi-Fi network (TcSE ROIN-291837)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Connectivity status = Not connected Scenario Description
+The currently selected Wi-Fi network no longer available while info screen still present Post-conditions
+The Wi-Fi network information will still be present until the user exits the {information} HMI. Once the user closes the HMI, then comes back, the Wi-Fi network will no longer be listed in the list of in-range Wi-Fi networks. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.18 WFCF-UC-REQ-025271/D-No new Wi-Fi networks available after search or refresh (TcSE ROIN-291854)
+Linked Elements
+WFCF-UC-REQ-025255/D-User would like to refresh the list of Wi-Fi network(s) within range (TcSE ROIN-291838)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON Scenario Description
+No new Wi-Fi networks available when user selects the {search} or {refresh} option in the HMI Post-conditions
+No new Wi-Fi network are added to the list of Wi-Fi Networks List of Exception Use Cases
+N/A Interfaces
+G-HMI
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 24 of 38
+3.1.1.19 WFCF-UC-REQ-025272/D-Incorrect Wi-Fi network password (TcSE ROIN-291855)
+Linked Elements
+WFCF-UC-REQ-025256/B-User would like to select and connect to a Wi-Fi Network (TcSE ROIN-291839)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Wi-Fi network(s) available Scenario Description
+While attempting to connecting to a Wi-Fi network, the user enters the incorrect password Post-conditions
+The system SHALL allow the user to re-enter the password once again or to {cancel}. An HMI indication needed to reflect "incorrect password, or failed". List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.20 WFCF-UC-REQ-025273/D-Open Wi-Fi network doesn’t require a password (TcSE ROIN-291856)
+Linked Elements
+WFCF-UC-REQ-025256/B-User would like to select and connect to a Wi-Fi Network (TcSE ROIN-291839)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Wi-Fi network(s) available Scenario Description
+The user connects to an open Wi-Fi network without a password Post-conditions
+After the user selects {connect}, the system should automatically connect and a message and icon should indicate to the user that he/she is currently connected to the specific Wi-Fi network. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.21 WFCF-UC-REQ-025274/E-WPS association time expires (TcSE ROIN-291857)
+Linked Elements
+WFCF-UC-REQ-025257/F-User would like to connect to a Wi-Fi Network using Wi-Fi Protected Setup (WPS) using the router’s WPS Push-Button-Method (TcSE ROIN-291840)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Wi-Fi Protected Setup(WPS) enabled Access Point device (router) Scenario Description
+The time base (2 minutes) message displayed on the screen expires during a WPS Push-Button-Method Post-conditions
+The time based message is removed from the {HMI}. The user must select the {Wi-Fi Protected setup icon} in the System’s HMI if he/she would like to try to re-associate to the Access Point (router) via WPS Push-Button-Method List of Exception Use Cases
+N/A Interfaces
+G-HMI
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 25 of 38
+3.1.1.22 WFCF-UC-REQ-025275/E-System’s WPS Random PIN message expires (TcSE ROIN-291858)
+Linked Elements
+WFCF-UC-REQ-025258/D-User would like to connect to a Wi-Fi Network using Wi-Fi Protected Setup (WPS) PIN provided by the system (TcSE ROIN-291841)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Wi-Fi Protected Setup (WPS) enabled Access Point device (router) Scenario Description
+The time base (2 minutes) message with the random PIN displayed on the screen expires during a WPS PIN entry method Post-conditions
+The time based message is removed from the {HMI}. The user must select the {WPS Pin Entry} in the System’s HMI if he/she will likes to try to re-associate to the Access Point (router) via WPS PIN entry method List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.23 WFCF-UC-REQ-025276/D-Currently connected Wi-Fi network disconnects (TcSE ROIN-291859)
+Linked Elements
+WFCF-UC-REQ-025259/I-User would like to find more information about the Wi-Fi network (TcSE ROIN-291842)
+Actors
+Vehicle occupant Pre-conditions
+Infotainment system is available
+Driver Restriction = OFF
+Wi-Fi = ON
+Connectivity status = Connected Scenario Description
+The current selected Wi-Fi network disconnects or is no longer available while info screen still present Post-conditions
+The Wi-Fi network information will still be present until the user exits the {information} HMI. Once the user exits the HMI then goes back again the unavailable Wi-Fi network will no longer be listed in the list of in-range Wi-Fi networks. If the network disconnects but still available then the Wi-Fi indicator should reflect the "not connected" status. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.24 WFCF-UC-REQ-025284/E-Currently connected to a Wi-Fi network (TcSE ROIN-291867)
+Linked Elements
+WFCF-UC-REQ-025267/E-User would like to know his/her current Wi-Fi network connectivity status while away from the Wi-Fi settings HMI (TcSE ROIN-291850)
+Actors
+Vehicle occupant Pre-conditions
+The user is currently navigating the HMI (not in the Wi-Fi settings HMI) and would like to know the current status of his/her Wi-Fi connectivity. Scenario Description
+The user is currently navigating the HMI (not in the Wi-Fi settings HMI) and would like to know the current status of his/her Wi-Fi connectivity. The system is currently connected to a Wi-Fi network Post-conditions
+The {Wi-Fi HMI icon} should dynamically display the {signal strength} of the connected Wi-Fi network List of Exception Use Cases
+N/A Interfaces
+G-HMI
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 26 of 38
+3.1.1.25 WFCF-UC-REQ-025285/D-Not connected to any Wi-Fi network (TcSE ROIN-291868)
+Linked Elements
+WFCF-UC-REQ-025267/E-User would like to know his/her current Wi-Fi network connectivity status while away from the Wi-Fi settings HMI (TcSE ROIN-291850)
+Actors
+Vehicle occupant Pre-conditions
+The user is currently navigating the HMI (not in the Wi-Fi settings HMI) and would like to know the current status of his/her Wi-Fi connectivity. Scenario Description
+The user is currently navigating the HMI (not in the Wi-Fi settings HMI) and would like to know the current status of his/her Wi-Fi connectivity. The system is currently not connected to any Wi-Fi network Post-conditions
+The connectivity {Wi-Fi HMI icon} will not be present. No signal strength will be displayed. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.26 WFCF-UC-REQ-025286/D-Wi-Fi Feature OFF (TcSE ROIN-291869)
+Linked Elements
+WFCF-UC-REQ-025267/E-User would like to know his/her current Wi-Fi network connectivity status while away from the Wi-Fi settings HMI (TcSE ROIN-291850)
+Actors
+Vehicle occupant Pre-conditions
+The user is currently navigating the HMI (not in the Wi-Fi settings HMI) and will like to know the current status of his/her Wi-Fi connectivity. Scenario Description
+The user is currently navigating the HMI (not in the Wi-Fi settings HMI) and would like to know if he/she is currently connected to a Wi-Fi network. The Wi-Fi feature is turned OFF. Post-conditions
+The {Wi-Fi HMI icon} will not be display. List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.1.27 WFCF-UC-REQ-050372/C-Configure Automatic Software Update
+Actors
+Vehicle occupant Pre-conditions
+Infotainment System is ON
+Car in park mode Scenario Description
+The user has the option to activate/deactivate automatic software update from the settings menu
+The user may be prompted to accept activating the feature Post-conditions
+Automatic update will be activated/deactivated based on the users selection List of Exception Use Cases
+N/A Interfaces
+G-HMI
+3.1.2 Functional Requirements
+3.1.2.1 WFCF-FUR-REQ-025287/D-FCC and international radio regulatory requirements (TcSE ROIN-296177-1)
+The system shall meet all applicable FCC and international radio regulatory requirements.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 27 of 38
+3.1.2.2 WFCF-FUR-REQ-025288/B-Development connectivity (TcSE ROIN-296178-1)
+The system shall allow the use of the Wi-Fi interface for code development/debug/diagnostic functionality (i.e. Real time diagnostic)
+3.1.2.3 WFCF-FUR-REQ-050371/F-Automatic Software Update
+The system SHALL support a user method to turn Automatic software update feature ON/OFF.
+In all instances, E911, rear view camera and installation shall temporarily disable this feature. E911 activation shall disable the feature until the next full ignition cycle.
+3.1.2.4 WFCF-FUR-REQ-052061/I-Automatic Software Update is ON, trigger 1
+If the vehicle goes into park mode, extended play mode, accessory mode or delayed accessory mode and the IVSU OTA trigger is ON, the system shall automatically attempt to connect to an Access Point and search for data if:
+? Wi-Fi is ON and there is a configured Access Point at this location (that the user has previously configured).
+? There are no override modes in effect (e.g. E911).
+? The system is not already attempting to connect to an Access Point, connected to an Access Point, and/or searching for data.
+3.1.2.5 WFCF-FUR-REQ-052062/I-Automatic Software Update is ON, trigger 2
+If the IVSU OTA trigger changes to ON, the system shall automatically attempt to connect to an Access Point and search for data if:
+? The vehicle is in park mode, extended play mode, accessory mode or delayed accessory mode.
+? Wi-Fi is ON and there is a configured Access Point at this location (that the user has previously configured).
+? There are no override modes in effect (e.g. E911).
+? The system is not already attempting to connect to an Access Point, connected to an Access Point.
+3.1.2.6 WFCF-FUR-REQ-052063/I-Automatic Software Update is ON, trigger 3
+If the user configures an Access Point and the IVSU OTA trigger is ON , the system shall automatically attempt to connect to that Access Point and search for data if:
+? The vehicle is in park mode, extended play mode, accessory mode or delayed accessory mode.
+? There are no override modes in effect (e.g. E911).
+3.1.2.7 WFCF-FUR-REQ-052064/I-Automatic Software Update is ON, trigger 4
+If Wi-Fi turns ON and the IVSU OTA trigger is ON , the system shall automatically attempt to connect to an Access Point and search for data if:
+? The vehicle is in park mode, extended play mode, accessory mode or delayed accessory mode.
+? There is a configured Access Point at this location (that the user has previously configured).
+? There are no override modes in effect (e.g. E911).
+3.1.2.8 WFCF-FUR-REQ-052065/D-Wi-Fi Signal Strength Presentation
+The relation between the displayed number of bars and the Wi-Fi signal strength (in dBm) SHALL be initially set as follows;
+Number of bars
+Wi-Fi signal strength (in dBm)
+4
+-55 or higher
+3
+-56 to -70
+2
+-71 to -85
+1
+-86 to -95
+0 (ignore)
+-96 or lower
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 28 of 38
+3.1.2.9 WFCF-FUR-REQ-025289/D-Internet Gateway/Firewall (TcSE ROIN-296179-1)
+- The system shall provide internet Gateway/Firewall capability to provide enhanced security and protection of the network by blocking external devices from fully connecting until the user explicitly allows them.
+- The system’s firewall rules shall be configured such that it generally restrict external network access, but with the flexibility for applications to temporarily open ports for special applications, diagnostics, servicing, and other scenarios.
+3.1.2.10 WFCF-FUR-REQ-025290/E-Wi-Fi settings APIs (TcSE ROIN-296180-1)
+APIs shall be provided to perform the following:
+- Configure and modify firewall rules
+- Configure and modify Connection Manager settings
+- Connect to Wi-Fi Networks, and handle associating devices with the Wi-Fi Access Point
+- API and application events so applications can easily determine the current network state and ability to acquire connectivity.
+- API to provide the ability to determine if/when connectivity is available (or can be acquired).
+3.1.2.11 WFCF-FUR-REQ-025292/D-Driver Restriction (TcSE ROIN-296182-1)
+When local/regional rules mandate, Driver restriction shall apply to Wi-Fi settings. These options/settings not be available to use while the vehicle is moving and driver restriction = ON
+3.1.2.12 WFCF-FUR-REQ-025293/D-Enable (ON)/Disable (OFF) Wi-Fi Feature (TcSE ROIN-296183-1)
+The system SHALL allow for enabling and disabling the Wi-Fi feature.
+Wi-Fi feature operational status SHALL be independent from Bluetooth; when Wi-Fi is disabled, it shall not affect any Bluetooth functionality.
+3.1.2.13 WFCF-FUR-REQ-115767/G-Manual Disconnection
+If a user manually disconnects from an Access Point, the system SHALL follow this logic;
+? Manually disconnecting from an AP SHALL not result in removing that AP from the known APs list.
+? If a user manually disconnects from a connected AP, the system shall behave as follows;
+o The system SHALL NOT automatically reconnect to another available AP until;
+? The vehicle changes mode going into park, extended play mode, accessory mode or delayed accessory mode, the system shall automatically connect to a configured AP if
+? The “IVSU OTA trigger” is ON
+? Wi-Fi is ON and there is a configured Access Point at this location (that the user has previously configured).
+? There are no override modes in effect (e.g. E911).
+? The system is not already attempting to connect to an Access Point, connected to an Access Point.
+3.1.2.14 WFCF-PFM-REQ-025295/D-Time to enable Wi-Fi Antenna and connectivity (TcSE ROIN-296185-1)
+The time it takes the system to connect to an access point SHALL not exceed 10 seconds.
+3.1.2.15 WFCF-PFM-REQ-025296/D-Wi-Fi Antenna Range (TcSE ROIN-296186-1)
+The system shall comply with IEEE 802.11a/b/g/n/ac standards.
+The range for Wi-Fi to be able to connect to an Access Point shall adhere to the medium to maximum range of each of the specific IEEE 802.11 network standards.
+3.1.2.16 WFCF-PFM-REQ-025297/D-Wi-Fi throughput (TcSE ROIN-296187-1)
+The optimal throughput and data rates to be supported for Wi-Fi shall adhere to the medium to maximum range of each of the specific IEEE 802.11 network standard.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 29 of 38
+3.1.2.17 WFCF-FUR-REQ-025298/D-System application Wi-Fi Subsystem disconnect events (TcSE ROIN-296188-1)
+All system applications that use the Wi-Fi subsystem, SHALL assume that connectivity can be lost at any time and SHALL be coded to handle graceful connection, disconnection and Handover events.
+3.1.2.18 WFCF-FUR-REQ-025299/D-Wi-Fi mode and BT interaction (TcSE ROIN-296189-1)
+- During a BT inquiry scan, the system should not drop Wi-Fi connections: any Wi-Fi connections (client or AP) that are dropped shall be re-established. All applications should handle this situation gracefully
+- When the system’s BT device is discoverable, all applications should handle any Wi-Fi (client or AP) connection events gracefully
+3.1.2.19 WFCF-FUR-REQ-025300/G-Wi-Fi client configuration parameters (TcSE ROIN-296190-1)
+When acting as an AP, the system shall support the following Wi-Fi client configuration parameters:
+- SSID
+- Security (WPA/WPA2)
+- Security key ((Pre-shared) key (PSK))
+- Client IP and MAC address filtering (using the Windows CE Firewall component)
+- Client MAC control
+- Channel
+- Band
+- Automatic IP via DHCP or static configuration
+When acting as a station, the system shall support the following WiFi client configuration parameters:
+- SSID
+- Security (None/WEP/WPA/WPA2)
+- Security key ((Pre-shared) key (PSK))
+- Automatic IP via DHCP or static configuration
+- Band
+3.1.2.20 WFCF-FUR-REQ-025302/E-Wi-Fi settings configurable (TcSE ROIN-296192-1)
+Wireless mode (b/g/n/ac/b+g+n)
+Client roaming sensitivity (high/medium/low)
+Mixed mode protection
+Radio Transmitter power
+Extended channel binding
+Multi-user MIMO
+Modulation
+Beamforming
+2.4GHZ /5GHZ
+All of the settings/values above will be configurable in the base image.
+3.1.2.21 WFCF-FUR-REQ-025303/J-Wireless network(s) information APIs (TcSE ROIN-296193-1)
+The following list of items shall be acquired by the Wi-Fi feature from any Wi-Fi API within range:
+- SSID
+- MAC Address
+- Connection status
+- Geo-coordinates (if available)
+- Signal Strength (RSSI)
+- Security
+- Channel
+- Band
+- Network type (if available)
+- IP Address (if connected)
+- Subnet Mask (if connected)
+For a connected network, the e following items shall be stored in a log/database.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 30 of 38
+- SSID
+- MAC Address
+- Connection status
+- Geo-coordinates (if available)
+- Signal Strength (RSSI)
+- Security
+- Channel
+- Band
+- Network type
+- IP Address
+- Subnet Mask
+- DHCP advertised name of the device connected
+3.1.2.22 WFCF-FUR-REQ-025304/E-Wi-Fi Direct support & Certification (TcSE ROIN-296194-1)
+- The system shall support Wi-Fi Direct and the other prerequisite WFA specifications such as P2P, WPS, WMM.
+- The system shall be certified as a Wi-Fi CERTIFIED Wi-Fi Direct device via the Wi-Fi alliance consortium.
+3.1.2.23 WFCF-FUR-REQ-025305/D-Wireless Network Scanning/refreshing (TcSE ROIN-296195-1)
+APs unique address (MAC) SHALL be used to identify previously configured AP hot spots:
+- SSID may not be used as the sole identifier as it is not guaranteed unique. (The only exception to this is for plant provisioning.)
+- SSID and Geo coordinates may be used to help identify networks with multiple APs with the same SSID.
+3.1.2.24 WFCF-FUR-REQ-025306/J-Wireless network Functionality (TcSE ROIN-296196-1)
+The built-in Wi-Fi connection may operate in the following modes: Access Point (AP), Wi-Fi Direct (group owner or client) and Client (Infrastructure), Client/AP mode and Test/EOL/diagnostics mode.
+The Test mode SHALL only be available during EOL testing.
+Remote clients shall not be able to associate with the system’s Wi-Fi AP without using secure authentication/encryption (WPA or WPA2)
+During plant provisioning, Wi-Fi SHALL only be in client mode.
+The Wi-Fi client SHALL support roaming in all modes.
+During plant provisioning, BT SHALL be powered off to maximize Wi-Fi throughput
+Refer to S36 Software Provisioning Specification
+The system SHALL support concurrent (at the same time) AP and client (STA) modes
+3.1.2.25 WFCF-FUR-REQ-025307/B-Wi-Fi chip design review (TcSE ROIN-296197-1)
+All parties involved in the manufacturing wireless provisioning process (Ford PD, Ford IT, Wi-Fi vendor, Access Point vendor, and system integrator) shall review/test/modify the Wi-Fi chip final design and assembly breadboard to make sure it meets overall manufacturing FTT requirements
+3.1.2.26 WFCF-FUR-REQ-025308/B-Association/authentication/ data rate speeds (TcSE ROIN-296198-1)
+The Wi-Fi module shall be able to accommodate and support Ford IT Network Global Wireless Deployment Standards data rate speeds.
+3.1.2.27 WFCF-FUR-REQ-025309/D-Wireless network connected while moving (TcSE ROIN-296199-1)
+- The currently connected AP shall be automatically dropped once it is out of range (e.g. after driving away), the module SHALL not disassociate with that AP. This provides the maximum connectivity window upon startup.
+- A new hot spot shall not be automatically connected to until the consumer exits Driver restriction Mode again.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 31 of 38
+3.1.2.28 WFCF-FUR-REQ-025310/B-Dual BT/Wi-Fi antenna chip (TcSE ROIN-296200-1)
+The system shall not interrupt Bluetooth connections when switching between different Wi-Fi connectivity modes
+3.1.2.29 WFCF-FUR-REQ-025311/D-Wireless network connection(s) legal implications (TcSE ROIN-296201-1)
+The system shall support enabling/disabling and configuring the legal warnings based on local/regional requirements for connecting to Open wireless networks or any other needed connectivity warning
+3.1.2.30 WFCF-FUR-REQ-025312/D-Security Keys/Password support (TcSE ROIN-296202-1)
+The system shall be able to connect to Open networks as well as network with the following security profiles: WEP, WPA, WPA2
+- WEP keys can be 10, 26, 32, or 64 hexadecimal characters. (Refer to Wi-Fi chip supplier documentation)
+- WPA/WPA2 modes shall use a 256 bit key
+- Shared-key WPA may also accept an ASCII-based passphrase from 8 to 63 characters
+3.1.2.31 WFCF-FUR-REQ-025313/D-Wireless Protected Setup (WPS) support (TcSE ROIN-296203-1)
+The system shall support Wireless Protected Setup (WPS)
+- Refer to Wi-Fi CERTIFIED™, Wi-Fi Protected Setup™ Interoperability Test Plan, version 2.0.16 for additional details.
+3.1.2.32 WFCF-FUR-REQ-025314/I-Wi-Fi alliance security profiles & WPS certification (TcSE ROIN-296204-1)
+- The system Wi-Fi client (STA), shall meet all applicable requirements in the Wi-Fi.org WPA2 test plan
+- The system Wi-Fi AP, ASD version of WPA2, shall meet all applicable requirements to be certified with the WiFi.org logo from The Wi-Fi Alliance
+- The Wi-Fi AP shall support WPA and WPA2 encryption standards as called out by Wi-Fi alliance WPA2 test plan (i.e. implied by Wi-Fi certification)
+- The Wi-Fi client SHALL support WEP, WPA and WPA2 encryption standards as called out by Wi-Fi alliance WPA2 test plan (i.e. implied by Wi-Fi certification)
+3.1.2.33 WFCF-FUR-REQ-025315/G-Pre-Populated Wi-Fi networks APIs (TcSE ROIN-296205-1)
+- The system shall support the ability to pre-populate Wi-Fi networks specifically to be used for plant provisioning (or Over the Air update).
+- In the plant mode, the system shall automatically connect to pre-configured Wi-Fi network if proper pre-shared keys are available
+- In other modes, the system shall automatically connect to a pre-configured Wi-Fi network if proper pre-shared keys are available and if the IVSU OTS trigger is ON.
+3.1.2.34 WFCF-FUR-REQ-025316/G-Wi-Fi analytics availability (TcSE ROIN-296206-1)
+The system shall acquire and use the following information from visible Networks (APs):
+- Unique MAC Address
+- SSID
+- GPS Coordinates (if available)
+- Signal strength
+- Security
+- Connection status
+- Supported band
+All this information shall be in a format easily accessible for a developer
+3.1.2.35 WFCF-FUR-REQ-025317/D-Network connection password failure (HMI) (TcSE ROIN-304479)
+The HMI SHALL support a timed out popup to indicate an incorrect password/connection failed. The HMI SHALL also support the option of going back to the list.
+The system SHALL support an option to reenter the password after connection failure due to password rejection.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 32 of 38
+3.1.2.36 WFCF-FUR-REQ-025318/D-Network connection using WPS-push button (HMI) (TcSE ROIN-304480)
+If a Wi-Fi network that uses WPS (push button) is selected for connection, the HMI SHALL show a button for WPS. Once the WPS button is selected, a time base popup will display on the screen. If the connection is established or it times out, the popup will disappear and the connectivity indicator SHALL reflect a connected state.
+3.1.2.37 WFCF-FUR-REQ-025319/D-Network connection using WPS-PIN (HMI) (TcSE ROIN-304481)
+If a Wi-Fi network that uses WPS (pin provided by system) is selected for connection. Once the WPS icon is selected, a time base pin will display on the screen. If the connection is established or it times out (2 minutes), the popup will disappear and the connectivity indicator SHALL reflect a connected state. If the entered pin is wrong, a pin will show again as long as it is still within the timeout period. The option of going back SHALL be supported.
+3.1.2.38 WFCF-FUR-REQ-025325/B-Wi-Fi network availability notification (functional) (TcSE ROIN-304487)
+The HMI SHALL support the option of turning the Wi-Fi network(s) availability notification ON/OFF. The option is only available when the Wi-Fi feature is ON.
+3.1.2.39 WFCF-FUR-REQ-086699/D-Wi-Fi Network Availability Notification trigger (Functional)
+If Wi-Fi Network Availability Notification feature is ON and the vehicle goes into park mode (for automatic transmission), parking brake is active (for manual transmission), extended play mode, accessory mode or delayed accessory mode, the system shall display the network availability notification icon if
+? There is a Wi-Fi network within range
+? The system is not already connected to a Wi-Fi network
+3.1.2.40 WFCF-FUR-REQ-025326/F-Wi-Fi network availability notification (HMI) (TcSE ROIN-304488)
+If the Wi-Fi network(s) availability notification is ON and all the conditions to trigger the notification are met, the HMI SHALL display a pressable icon (button) in a general location on the screen. Once this button is pressed, the system SHALL display the Wi-Fi menu.
+3.1.2.41 WFCF-FUR-REQ-086700/A-Wi-Fi network availability notification Default Setting (functional)
+The Default setting for the Wi-Fi network notification feature SHALL be ON as long as the Wi-Fi feature is ON. Turning the Wi-Fi feature OFF will also turn the Wi-Fi network availability notification feature OFF.
+3.1.2.42 WFCF-FUR-REQ-025327/D-Wi-Fi Network connectivity status (HMI) (TcSE ROIN-304489)
+The HMI SHALL support an icon in a general place to indicate Wi-Fi Connected.
+3.1.2.43 WFCF-FUR-REQ-025328/G-Security Keys/Passwords (TcSE ROIN-304490)
+This section adds clarification for expectations for security keys and passphrases to be used and displayed by the system for both Wi-Fi client and AP modes:
+? WEP keys can be 10, 26, 32, or 64 hexadecimal characters. (Part 11: Wireless LAN Medium Access Control (MAC) and Physical Layer (PHY) Specifications, IEEE Std 802.11™-2012)
+? WPA/WPA2 modes use a 256 bit key by comparison.
+? Pre-Shared key WPA may also accept an ASCII-encoded passphrase from 8 to 63 characters. In this case the PBKDF2 hash function is used to generate the actual key with the station SSID as the salt value.
+- If the SSID or passphrase are poorly chosen, then the pre-shared key is vulnerable to password cracking attacks. Note that in the AP mode, a unique portion of the unique vehicle serial number (ESN) is included in the default AP SSID broadcasted by the system which provides some protection against hacking.
+3.1.2.44 WFCF-FUR-REQ-025329/E-Security keys (HMI) (TcSE ROIN-304491)
+- The HMI SHALL allow the user to enter either the raw key or passphrase within the HMI.
+- The HMI SHALL also display both values on the HMI when displaying the AP shared key. Note that the default key value for the AP is a randomly chosen key, so no passphrase would be associated with the key. This random value can be changed
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 33 of 38
+- For Wi-Fi Protected Setup (WPS) implementation, the PIN entry method is the mandatory method while the push button method is optional. If WPS is used with the PIN method;
+- In the Client mode, the HMI shall support the following parameters; SSID, Passphrase, connection status, WPS PIN.
+3.1.2.45 WFCF-FUR-REQ-052066/A-Wi-Fi Keep last Wi-Fi mode after ignition
+The system shall remember the Wi-Fi mode between ignition cycles.
+3.1.2.46 WFCF-FUR-REQ-140711/B-Presenting the List of available networks (HMI)
+- In the list of available networks, the HMI SHALL show the network security indicator to the left side next to the signal strength icon.
+- While searching for available networks, the HMI screen SHALL show a processing animation and text saying “Searching “
+- In the list of available networks screen, the HMI SHALL show a “Network Details” button next to each network. When clicked, it shows the network information
+o When a user clicks a secure network from the available networks list, the HMI SHALL present the password entry screen.
+o When a user clicks an open network from the available networks list, the system SHALL attempt the connection.
+3.1.2.47 WFCF-FUR-REQ-140713/B-Manual disconnection from Wi-Fi Access Point (HMI)
+? If a user manually disconnects a network, the system SHALL not delete that network credentials (eg. SSID, passcode).
+? If a user attempts to connect to a network, the system SHALL check first if the credentials are available. If credentials are available, the system SHALL connect without asking for a new password.
+o If that connection using the available password fails, the system SHALL delete the old password and give the user the option of entering a password.
+3.1.2.48 WFCF-FUR-REQ-140880/B-Wi-Fi connected icon in drive mode (HMI)
+The system SHALL display the Wi-Fi connected icon despite the vehicle mode of operation (eg. Drive mode) unless regulatory rules or local laws mandate otherwise (eg. Rear view camera).
+? The Wi-Fi connected icon SHALL not be impacted by other features (eg. Voice call). Regulatory rules and local legal requirements will override this rule.
+3.1.2.49 WFCF-FUR-REQ-140881/A-Time limit on failed Wi-Fi connections
+For a failed Wi-Fi connection to a Wi-Fi network, the time it takes between initiating the connection and the notification of the failed connection SHALL not exceed 30 seconds.
+3.1.2.50 WFCF-FUR-REQ-140882/E-Bluetooth/Wi-Fi coexistence
+The system SHALL comply with the following requirements;
+? Connecting to a Wi-Fi network SHALL not impact an existing Bluetooth connection and the phone voice quality of an ongoing call
+? During Software downloading using Wi-Fi network, the phone voice quality and other functions over Bluetooth connection SHALL not be impacted
+? If Wi-Fi connection is dropped during concurrent Bluetooth/Wi-Fi operation, the system SHALL attempt to reconnect to the Wi-Fi network and resume the interrupted application if the Wi-Fi connection conditions are still met.
+3.1.2.51 WFCF-FUR-REQ-140883/B-Displaying the list of available networks (HMI)
+The system SHALL display first secure then non secure networks. Within each group, the list SHALL be based on signal strength.
+3.1.2.52 WFCF-FUR-REQ-155237/D-Sync visible name
+When the system is connected to an access point, the communicated/displayed device name at the AP SHALL be “SYNC”.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 34 of 38
+3.1.2.53 WFCF-FUR-REQ-163771/A-WiFi start-up
+The Wi-Fi peripheral shall be fully powered and the Wi-Fi software shall be fully enabled whenever the CCPU is powered up as defined in the P06 spec. This includes for predictive triggers (ie. door unlock, door open as described in the P06 spec even if HMI_HMIMode_St = OFF).
+3.1.2.54 WFCF-FUR-REQ-205486/D-Telematic HotSpot Blocking
+If the “Telematic HotSpot blocking” feature is ON and Active;
+? The system’s client SHALL NOT connect to the Telematic HotSpot (WiFiHotSpotServer).
+? The system SHALL not display the Telematic HotSpot in the list of Wi-Fi available networks.
+3.1.2.55 WFCF-FUR-REQ-205491/F-Requesting the MAC address of the Telematic HotSpot
+If the “Telematic HotSpot blocking” feature is ON
+? Upon each ignition cycle, the system SHALL check the Telematic system’s availability (CAN signal TCUAvailability_St)
+o IF (CAN signal TCUAvailability_St=Enabled or Disabled), the system SHALL request the Telematic HotSpot MAC address using CAN signal WifiHotspotMAC_Rq.
+? The system SHALL use the MAC address received in the Transport Protocol signal WifiHotspotMAC_Rsp.
+? Upon receiving a valid MAC address, the system SHALL set the “Telematic HotSpot blocking” feature to Active.
+? If the system receives WifiHotspotMAC_Rsp with CES code “Final Result-Ffailure” OR “Final Result-Information”, it SHALL resend CAN signal WifiHotspotMAC_Rq immediately.
+? If the system receives WifiHotspotMAC_Rsp with CES code “Final Result-Wait”, the system SHALL resend CAN signal WifiHotspotMAC_Rq after 5 seconds.
+? If no response is received in 5 seconds, the system SHALL resend CAN signal WifiHotspotMAC_Rq.
+? The maximum number of sending CAN signal WifiHotspotMAC_Rq SHALL not exceed 3 times
+? For details regarding the CES (Command Execution Status) code and the TP signal itself, refer to the latest Transport Protocol APIM SPSS.
+? If the system does not receive a valid MAC value for any reason, it SHALL use the stored MAC values.
+? If no valid MAC address is stored or NULL value, the feature SHALL be Inactive (The system may display the Telematic HotSpot)
+o IF (CAN signal TCUAvailability_St=NULL), the system SHALL monitor TCUAvailability_St
+? While the system is monitoring the Telematic HotSpot status, If it becomes available [(CAN signal TCUAvailability_St) changes to (Enabled or Disabled)], the system SHALL request the MAC address of the Telematic HotSpot using the CAN signal WifiHotspotMAC_Rq.
+3.1.2.56 WFCF-FUR-REQ-205494/D-Using the MAC address of the Telematic HotSpot
+The system SHALL comply with the following
+? The system SHALL check the validity of the received MAC address from the Telematic system.
+? A valid MAC address conforms to the format defined by IEEE.
+? If the received MAC address is valid, the system SHALL store the Telematic HotSpot MAC address & set the “Telematic HotSpot blocking” feature to Active.
+? Upon receiving a valid MAC address, the system SHALL store it at the top of the list of MAC addresses.
+? The system SHALL be able to store up to 5 MAC addresses. The system SHALL manage the list using last in first out algorithm.
+? The system SHALL use the stored Telematic HhotSpot MAC addresses to restrict the connection. In the event that no valid MAC address is available or NULL value, the feature SHALL be Inactive (The system may display the Telematic HotSpot)
+If the “Telematic HotSpot blocking” feature is ON and Active
+? Upon scanning for access points or a refresh, the system SHALL check the list of stored MAC addresses
+? The system SHALL NOT display the SSIDs associated with the MAC addresses under available networks
+? The system SHALL NOT make it possible to manually connect to the Telematic HotSpot.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 35 of 38
+Upon a master system reset, the system SHALL keep the stored MAC addresses.
+The stored MAC addresses SHALL survive an ignition cycle.
+3.1.2.57 WFCF-FUR-REQ-205496/C-Telematic HotSpot Blocking Feature Default Setting
+The default setting of the feature SHALL be Inactive. The default values of all entries in the list of MAC addresses SHALL be NULL.
+3.1.2.58 WFCF-FUR-REQ-205497/F-Telematic HotSpot blocking Feature System Configuration
+The “Telematic HotSpot blocking” feature status SHALL be configurable in the system (ON, OFF). (Refer to “Infotainment Diagnostics Specification –APIM Gen 3” Hotspot Capable Modem DE01, if Not Present, the feature SHALL be OFF, if Present, the feature SHALL be ON).
+Status Definition Table
+“Telematic HotSpot Blocking” feature Status
+Definition
+ON
+Feature available
+OFF
+Feature is unavailable
+Active
+Feature is available and operating
+Inactive
+Feature is available but not operating
+Status Coexistence Table
+ON
+OFF
+Active
+Inactive
+ON
+NA
+N
+Y
+Y
+OFF
+N
+NA
+N
+Y
+Active
+Y
+N
+NA
+N
+Inactive
+Y
+Y
+N
+NA
+NA Not Applicable
+Y Yes (may coexist)
+N No (may not coexist)
+3.1.2.59 WFCF-FUR-REQ-205498/C-Wi-Fi settings after a Power loss
+The user’s defined Wi-Fi settings SHALL survive a power loss.
+3.1.2.60 WFCF-FUR-REQ-205499/B-5 GHz Operation
+To ensure conforming to 5GHz local regulations, the system SHALL be configurable to enable, disable Wi-Fi 5 GHz operation per country/region.
+? The system SHALL be able to selectively scan the 5GHz channels based on the country of operation.
+3.1.2.61 WFCF-REQ-226995/D-Display Wi-Fi MAC address
+The system SHALL support a method to make the Wi-Fi MAC address readable over the user interface.
+3.1.2.62 WFCF-FUR-REQ-226996/C-Connecting to a hidden network
+The system SHALL support the option of defining and connecting to a Wi-Fi network. Once this option is selected, the user SHALL be able to enter the network name (SSID), security type and password if applicable. Once that is done, the system SHALL connect to the defined network.
+The system SHALL allow deleting a user defined network.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 36 of 38
+3.1.2.63 WFCF-FUR-REQ-227356/B-Wi-Fi Network list management
+The user SHALL be able to forget a network; once the forget option is selected, the system SHALL delete the stored network information and remove that network from the list. If the user connects again to the same network, the system SHALL store the network information.
+3.1.2.64 WFCF-FUR-REQ-227357/D-Handling an access point with WPS security
+When attempting to connect to an access point that supports WPS security, the system SHALL behave as follows;
+o If the AP supports Open and WPS security, the system SHALL give the WPS option by displaying the WPS button.
+o If the AP supports WEP, WPA or WPA2, the system SHALL prompt for a password and display the password entry page.
+o If the AP supports any security method combined with WPS, the system SHALL give the WPS option by displaying the password entry page and the WPS button.
+o If the AP supports WPS only, the system SHALL give the WPS option by displaying the WPS button.
+3.1.2.65 WFCF-FUR-REQ-227358/B-Notification for blocking connection to a non-secure device
+When the system blocks a connection to a device for security reasons, the system SHALL support a method to indicate the reason to the user.
+3.1.2.66 WFCF-FUR-REQ-227359/B-Wi-Fi default setting
+The default setting of Wi-Fi feature SHALL be ON; after a master reset, Wi-Fi feature SHALL be ON
+3.1.2.67 WFCF-FUR-REQ-227705/B-FCC and international radio regulatory requirements for 5 GHz band
+The system SHALL meet all applicable FCC and international radio regulatory requirements related to 5 GHz band.
+3.1.2.68 WFCF-FUR-REQ-227706/B-Support DE block (5 GHz)
+The system shall support the ability to read the country code (ID?) from the DE block to aid in the configuration of Wi-Fi depending on the country. The system shall support a conversion mechanism that maps these country entries to IOS country codes.
+3.1.2.69 WFCF-FUR-REQ-227707/B-Default global configuration (5 GHz)
+The system SHALL support a default global configuration. The default configuration SHALL only include non-restricted channels.
+3.1.2.70 WFCF-FUR-REQ-227708/B-Country specific configuration (5 GHz)
+The system SHALL use a country specific configuration when available. If no specific configuration is available for a country or a Wi-Fi channel mapping for a specific country cannot be made, the system SHALL use the default global configuration for that key cycle.
+3.1.2.71 WFCF-FUR-REQ-227709/B-Channel settings (5 GHz)
+The system shall apply country or region-specific Wi-Fi channel settings before Wi-Fi is started. This includes, but is not limited to:
+1. Allowed channels
+2. Output power levels
+3. Passive channels (DFS)
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 37 of 38
+3.1.2.72 WFCF-FUR-REQ-227710/B-Acceptable Authority (5 GHz)
+The system shall use an acceptable authority for global Wi-Fi channel settings, Central Regulatory Domain Agent (CRDA) regdb is used as a reference model
+3.1.2.73 WFCF-FUR-REQ-227711/B-Dynamic Frequency selection (DFS) channels for Access Points (5 GHz)
+The Wi-Fi Access Point SHALL follow the IEEE 802.11 specifications identified behavior when a radar is detected.
+For allowed channels: https://en.wikipedia.org/wiki/List_of_WLAN_channels. Which is subject to change.
+3.1.2.74 WFCF-FUR-REQ-229061/B-WiFi Connection Manager 1
+Upon transition to Ignition OFF and delayed accessory is OFF, if the IVSU OTA trigger is ON, the system SHALL stay in VHM mode for up to X minutes to determine if there is any preconfigured Access Point and to connect to it. Where X is a configurable parameter with the maximum of 5 (minutes).
+3.1.2.75 WFCF-FUR-REQ-229064/B-WiFi Connection Manager 2
+The system SHALL support a connection manager to manage the different available connections including Wi-Fi connections.
+3.1.2.76 WFCF-FUR-REQ-229065/B-WiFi Connection Manager 3
+The system SHALL use the IVSU OTA trigger obtained from the IVSU feature as an indicator for needing to connect to a Wi-Fi network.
+3.1.2.77 WFCF-FUR-REQ-229066/B-WiFi Connection Manager 4
+The system SHALL support a mechanism to notify the IVSU manager when a connection is established, disconnected, lost or changed.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE: WIFI CONFIGURATION APIM SPSS V1.5
+SEP 7, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 38 of 38
+4 Appendix: Reference Documents
+Reference #
+Document Title
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 2 of 11
+Revision History
+Date Version Notes
+October 11, 2016
+1.0
+Initial Release
+February 27, 2017
+1.1
+Updated Release
+MD-REQ-237890/B-PowerFlow1_St
+rpaquet2 - Updated PwrFlowBatt, PwrFlowFuelBatt and TextDisplay. Deleted PwrFlowFuelEng and PwrLevelClimate. Added PwrFlwFuelClimt_B_Dsply, PwrFlwBattClimt_B_Dsply and PwrFlwBattGen_D_Dsply.
+MD-REQ-237891/B-HEVPHEVPowerFlow_St
+rpaquet2 - Updated EngMsgDsiplay1 and 2 to add 0xD Drive Mode Selection and updated HybridMode to make 0x7 Unused. Remove EngStatus per Feature owners request.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 3 of 11
+Table of Contents
+REVISION HISTORY .......................................................................................................................................................................... 2
+1 ARCHITECTURAL DESIGN .......................................................................................................................................................... 4
+1.1 EVPFI-SV-REQ-237886/A-Power Flow Display System .............................................................................................. 4
+1.2 EVPFI-CLD-REQ-237887/A-Power Flow Display Client ............................................................................................... 4
+1.3 PowerFlowDisplayClient Interface ................................................................................................................................ 4
+1.3.1 EVPFI-IIR-REQ-237888/A-PowerFlowDisplayClient_Tx .......................................................................................... 4
+1.3.2 EVPFI-IIR-REQ-237889/A-PowerFlowDisplayClient_Rx .......................................................................................... 5
+2 FUNCTIONAL DEFINITION .......................................................................................................................................................... 8
+2.1 EVPFI-FUN-REQ-237892/A-Power Flow Display Active .............................................................................................. 8
+2.1.1 Requirements ............................................................................................................................................................ 8
+2.1.2 Use Cases ................................................................................................................................................................. 8
+2.1.3 White Box View ......................................................................................................................................................... 9
+3 APPENDIX: REFERENCE DOCUMENTS ...................................................................................................................................... 11
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 4 of 11
+1 Architectural Design
+1.1 EVPFI-SV-REQ-237886/A-Power Flow Display System
+Internal Block Diagram
+1.2 EVPFI-CLD-REQ-237887/A-Power Flow Display Client
+The power flow display client outputs power flow information to the user based on data received from the power flow display
+server1 and power flow display server2. Please refer to the relevant specifications for information on display format/rules.
+1.3 PowerFlowDisplayClient Interface
+1.3.1 EVPFI-IIR-REQ-237888/A-PowerFlowDisplayClient_Tx
+This class does not transmit any signals. However, it provides output to the user.
+1 itsPowerFlowDisplayV2System:PowerFlowDisplayV2System
+1 itsPowerFlowDisplayClient:PowerFlowDisplayClient
+pPowerFlowDisplayServer2
+pPowerFlowDisplayServer1
+pPowerFlowDisplayUser
+1 itsPowerFlowDisplayServer1:PowerFlowDisplayServer1
+pPowerFlowDisplayClient
+1 itsPowerFlowDisplayServer2:PowerFlowDisplayServer2
+pPowerFlowDisplayClient
+1 itsPowerFlowDisplayUser:PowerFlowDisplayUser
+Operations
+UpdateView()
+pPowerFlowDisplayClient
+pUc_EVPFI-GUC-225356-Power Flow Display Selected
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 5 of 11
+1.3.2 EVPFI-IIR-REQ-237889/A-PowerFlowDisplayClient_Rx
+1.3.2.1 MD-REQ-237890/B-PowerFlow1_St
+Message Type: Status
+This signal communicates power flow display information.
+Name
+Literals
+Value
+Description
+BattSOC
+-
+Battery state of charge (SOC)
+(percent/0.5 resolution)
+0
+0x0
+0.5
+0x1
+…
+126.5
+0xFD
+No Data Exists
+0xFE
+Faulty
+0xFF
+PlugStatus
+-
+-
+Status of vehicle plug
+Off_Plug
+0x0
+On_Plug
+0x1
+PwrFlowBatt
+-
+Direction and destination of power flow in and out of the high voltage battery
+NoFlow_PathOff
+0x0
+FlowFromBattToRearWhls
+0x1
+FlowFromRearWhlsToBatt
+0x2
+FlowFromBattToFrontWhls
+0x3
+FlowFromFrontWhlsToBatt
+0x4
+FlowFromBattToAllWhls
+0x5
+FlowFromAllWhlsToBatt
+0x6
+FlowFromWallToBatt
+0x7
+Unused
+0x8
+Unused
+0x9
+Unused
+0xA
+Unused
+0xB
+Unused
+0xC
+Unused
+0xD
+Unused
+0xE
+Unused
+0xF
+PwrFlowFuel
+-
+Fuel/Engine power flow destination
+NoFlow_PathOff
+0x0
+FlowFromFuelToRearWhls
+0x1
+FlowFromFuelToFrontWhls
+0x2
+FlowFromFuelToAllWhls
+0x3
+Unused
+0x4
+Unused
+0x5
+Unused
+0x6
+Unused
+0x7
+PwrFlowFuelBatt
+-
+Engine Chagrining HV Battery
+NoFlow_PathOff
+0x0
+FlowFromFuelToBatt
+0x1
+PwrFlwFuelClimt
+-
+-
+No Flow
+0x0
+Flow
+0x1
+PwrFlwBattClimt
+-
+-
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 6 of 11
+No Flow
+0x0
+Flow
+0x1
+PwrFlwBattGen
+-
+-
+No Flow
+0x0
+Flow
+0x1
+TextDisplay
+-
+-
+Text label for power flow display
+No_Text
+0x0
+Disp_Hyb_Drive_Txt
+0x1
+Disp_Charg_HV_Batt_Txt
+0x2
+Disp_Idle_Txt
+0x3
+Disp_Idle_with_Chrg_Txt
+0x4
+Disp_Elec_Drv_Txt
+0x5
+Disp_Eng_Drv_Txt
+0x6
+Disp_Remote_Start_Txt
+0x7
+Disp_Charge_Cmplt_Txt
+0x8
+Disp_Fast_Charge_Cmplt_Txt
+0x9
+Disp_Fast_Charge_Txt
+0xA
+Dsply_Rgen_Chrg_Txt
+0xB
+Disp_12
+0xC
+Disp_13
+0xD
+Disp_14
+0xE
+Disp_15
+0xF
+1.3.2.2 MD-REQ-237891/B-HEVPHEVPowerFlow_St
+Message Type: Status
+This signal communicates power flow display information, and only applies to HEV / PHEV architectures. The signal includes information that was not included in PowerFlow1_St.
+Name
+Literals
+Value
+Description
+EngMsgDisplay1
+-
+-
+Highest priority reason engine is on
+No Display
+0x0
+Acceleration
+0x1
+High Speed
+0x2
+Heater Setting
+0x3
+Neutral Gear
+0x4
+Engine Cold
+0x5
+Batt Charging High Voltage
+0x6
+Low Gear
+0x7
+Normal Operation
+0x8
+Oil Maintenance
+0x9
+Fuel Maintenance
+0xA
+Hill Decent Control
+0xB
+Batt Temperature
+0xC
+Drive Mode Selection
+0xD
+EngMsgDisplay2
+-
+-
+Second highest priority reason engine is on
+No Display
+0x0
+Acceleration
+0x1
+High Speed
+0x2
+Heater Setting
+0x3
+Neutral Gear
+0x4
+Engine Cold
+0x5
+Batt Charging High Voltage
+0x6
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 7 of 11
+Low Gear
+0x7
+Normal Operation
+0x8
+Oil Maintenance
+0x9
+Fuel Maintenance
+0xA
+Hill Decent Control
+0xB
+Batt Temperature
+0xC
+Drive Mode Selection
+0xD
+HybridMode
+-
+Current Vehicle Hybrid State battery icon
+No Battery
+0x0
+Auto_Charge_Deplete_Mode
+0x1
+Auto_Charge_Sustain_Mode
+0x2
+Forced_Charge_Sustain_Mode
+0x3
+Forced_EV_Mode
+0x4
+EV_Override
+0x5
+EV_Charge
+0x6
+Unused
+0x7
+Unused
+0x8
+Unused
+0x9
+Unused
+0xA
+Unused
+0xB
+Unused
+0xC
+Unused
+0xD
+Unused
+0xE
+Unused
+0xF
+1.3.2.3 MD-REQ-237905/A-PowerFlow2_St
+Message Type: Status
+This signal communicates power flow display information, and only applies to HEV / PHEV architectures.
+Name
+Literals
+Value
+Description
+PwrLevelFuel
+-
+-
+Fuel level (percent / 0.108696 resolution / -5.2174 offset)
+-5.2174
+0x0
+-5.1087
+0x1
+…
+105.9785
+0x3FF
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 8 of 11
+2 Functional Definition
+2.1 EVPFI-FUN-REQ-237892/A-Power Flow Display Active
+This function includes use-cases that describe the power flow display feature in an active state.
+2.1.1 Requirements
+2.1.1.1 EVPFI-REQ-237893/A-Signals with Percent Values - Erroneous Values
+Signals with percent definitions should always receive values within a standard percent range: 0-100% of -100-100%.
+Individual signal definitions may include additional values outside of this range (i.e., 100.4%, -102.1%, etc); however, these erroneous values will be treated as a faulty signal and not be processed by the display client.
+2.1.2 Use Cases
+2.1.2.1 EVPFI-UC-REQ-237894/A-Power Flow Display Selected
+Linked Elements
+EVPFI-REQ-237893/A-Signals with Percent Values - Erroneous Values
+Actors
+User Pre-conditions
+Ignition status is equal to Run. Scenario Description
+The user selects the power flow display. Post-conditions
+The power flow display is active.
+Current power flow information is displayed to the user. List of Exception Use Cases
+E1 – Absense of new Power Flow data Interfaces
+G-HMI, Vehicle System Interface
+2.1.2.2 EVPFI-UC-REQ-237895/A-Absence of new Power Flow data
+Linked Elements
+EVPFI-REQ-237893/A-Signals with Percent Values - Erroneous Values
+Actors
+User Pre-conditions
+Same as normal use case Scenario Description
+The user selects the power flow display and there is no new/updated data being sent to this display. Post-conditions
+The display functions as defined in the relevant HMI specification. List of Exception Use Cases
+N/A Interfaces
+G-HMI, Vehicle System Interface
+2.1.2.3 EVPFI-UC-REQ-237896/A-Vehicle power mode change for Power Flow Display
+Linked Elements
+EVPFI-REQ-237893/A-Signals with Percent Values - Erroneous Values
+Actors
+User
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 9 of 11
+Pre-conditions Ignition status is equal to run.
+Power Flow display is active.
+Scenario
+Description
+Ignition Status changes to a value less than run.
+Post-conditions The display functions as defined in the relevant HMI specification.
+List of Exception
+Use Cases
+N/A
+Interfaces G-HMI, Vehicle System Interface
+2.1.3 White Box View
+2.1.3.1 Activity Diagrams
+2.1.3.1.1 EVPFI-ACT-REQ-237897/A-Power Flow Display Selected
+Linked Elements
+EVPFI-SD-REQ-237898/A-Power Flow Display Selected
+ActivityDiagram
+2.1.3.2 White Box Scenarios
+2.1.3.2.1 EVPFI-SD-REQ-237898/A-Power Flow Display Selected
+Constraints
+Pre-condition
+Vehicle power mode is set to run and the user selects the power flow display.
+PowerFlowDisplayClient
+receiveNewPowerFlowData
+displayNewPowerFlowData
+PowerFlowDisplayUser
+PowerFlowDisplayServer2
+sendNewServer2PowerFlowData
+newServer2PowerFlowDataAvai lable
+PowerFlowDisplayServer1
+sendNewServer1PowerFlowData
+newServer1PowerFlowDataAvai lable
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 10 of 11
+Post-condition
+Current power flow information is displayed to the user.
+Scenarios
+Normal Usage
+The power flow display is active.
+SequenceDiagram
+[Architecture = HEV/PHEV]
+alt [Architecture = BEV]
+opt [Architecture = HEV/PHEV]
+:PowerFlowDisplay
+Server2
+newServer2PowerFlowDataAvailable()
+sendNewServer2PowerFlowData()
+:PowerFlowDisplay
+Server1
+newServer1PowerFlowDataAvailable()
+sendNewServer1PowerFlowData()
+:PowerFlowDisplay
+Client
+receiveNewPowerFlowData()
+displayNewPowerFlowData()
+PowerFlow1_St()
+PowerFlow1_St()
+HEVPHEVPowerFlow_St()
+PowerFlow2_St()
+:PowerFlowDisplay
+User
+UpdateView()
+Note: While this
+diagram shows data
+sent sequentially
+from server1 and
+server2, each server
+will independently
+send new data as it
+is available. The
+display should
+update when it
+receives new data
+from either server
+source.
+Ford Motor Company
+Subsystem Part Specific Specification
+Engineering Specification
+FILE:POWER FLOW DISPLAY CLIENT V2 APIM
+SPSS V1.1 FEB 27, 2017
+FORD MOTOR COMPANY CONFIDENTIAL
+The information contained in this document is Proprietary to Ford Motor Company.
+Page 11 of 11
+3 Appendix: Reference Documents
+Reference #
+Document Title
+1
+2
+3
+4
+5
